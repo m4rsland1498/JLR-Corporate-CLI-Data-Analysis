@@ -94,42 +94,62 @@ def parseMenu(save_path):
             brands_and_models = []
         active_col = col_b
         
+    temp = []
+    for i in brands_and_models:
+        if i != None:
+            temp.append(str(i))
+        else:
+            temp.append(i)
+    brands_and_models = temp
+        
 ##########################################################################################
         
 def parseAndPresentData(selected_index, save_path):
     global df1
-    global firstCol
     global year
+    global attempts
     
-    # finally some consistency in the spreadsheets: always same 9 (used) columns
-    #columns = [1,2,3,5,6,7,9,10,11] # adjusted and later adjusted based on if column A is used
-    columns = [1,2,5,6,9,10] # adjusted and later adjusted based on if column A is used
-    # above ignores percentages
-    
+    full_labels = [f"QTD{year}", f"QTD{year-1}",
+                   f"FYTD{year}", f"FYTD{year-1}",
+                   f"CYTD{year}", f"CYTD{year-1}"]
+    colours = [Colors.Magenta, Colors.Green, Colors.Blue, Colors.Red, Colors.Yellow, Colors.Cyan, None]
+
     for i in range(len(selected_index)):
-        row_data = []
-        for j in columns:
-            row_data.append([df1.cell(row=selected_index[i]+1,column=j+attempts).value])
+        row_values = []
+        non_empty_count = 0
+        full_row = df1[selected_index[i] + 1]
         
-        presentData = Data(row_data, [f"QTD{year}", f"QTD{year-1}",
-                                      f"FYTD{year}", f"FYTD{year-1}",
-                                      f"CYTD{year}", f"CYTD{year-1}"
-                                      ]) # quarter to date, fiscal year to date, calendar year to date
-        colours = [Colors.Magenta, Colors.Green, Colors.Blue, Colors.Red, Colors.Yellow, Colors.Cyan,None]
+        for cell in full_row:
+            cell_value = cell.value
+            if cell_value is not None and cell_value != '':
+                is_numeric = isinstance(cell_value, (int, float))
+                
+                if is_numeric:
+                    non_empty_count += 1
+                    # append the value if it's a number and not the third one in a row
+                    if non_empty_count % 3 != 0:
+                        row_values.append([float(cell_value)])
+                else:
+                    # reset the count if a non-number in cell - accounts for errors in excel file as I found a div/0 error
+                    non_empty_count = 0
+        
+        labels_to_use = full_labels[:len(row_values)]
+        presentData = Data(row_values, labels_to_use)
         args = Args(
-            title=f"JLR Retails to Date - {df1.cell(row=selected_index[i]+1,column=attempts).value}",
+            title=f"JLR Retails to Date - {df1.cell(row=selected_index[i]+1, column=attempts).value}",
             width=80,
-            no_readable=True, # should now show raw numbers but does not
-            colors=[colours[i%7]],
+            no_readable=True,
+            colors=[colours[i % 7]],
             format="{:.0f}",
         )
         
         chart = BarChart(presentData, args)
         chart.draw()
         
-        print(row_data, "\n\n")
+        print([item[0] for item in row_values], "\n\n")
 
         #pie charts
+        """
         qpoySectionName = df1.cell(row=selected_index[i]+1,column=attempts).value
         qpoySectionValue = df1.cell(row=selected_index[i]+1,column=1+attempts).value
         qpofyTotalSubSection = df1.cell(row=selected_index[i]+1,column=5).value - qpoySectionValue
@@ -148,6 +168,7 @@ def parseAndPresentData(selected_index, save_path):
             print(qpocyChart)
         else:
             print("This quarter's sales make up all of the calendar year to date.")
+        """
 
     os.remove(save_path)
         
@@ -160,8 +181,6 @@ def menu(save_path):
                                  show_search_hint=True, multi_select=True,
                                  show_multi_select_hint=True)
     selected_index = terminal_menu.show()
-    #print(f"You have selected {options[selected_index]}")
-    #print(selected_index)
     parseAndPresentData(selected_index, save_path)
     
 
@@ -171,6 +190,7 @@ def menu(save_path):
 
 ##########################################################################################
 
+os.system("clear")
 global year
 while True:
     FYs = {2022:[1,2,3,4], 2023:[1,2,3,4], 2024:[1,2,3,4], 2025:[1,2,3,4], 2026:[1]}
