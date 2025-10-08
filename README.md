@@ -1,0 +1,1 @@
+This is a CLI application that allows the user to select a Fiscal Year and a Quarter before analysing the JLR Corporate website and requesting the appropriate Excel files. Then, the user can select what information they want displayed and the software will display this information clearly in the terminal. 
