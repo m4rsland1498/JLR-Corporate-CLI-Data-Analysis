@@ -84,7 +84,16 @@ def parseMenu(save_path):
     while brands_and_models == []:
         attempts+=1
         for row in range(0,df1.max_row):
-            brands_and_models.append(active_col[row].value)
+            data = active_col[row].value
+            if ("Retail" in str(data)
+                or "CJLR" in str(data)
+                or "No longer" in str(data)
+                or "Note" in str(data)
+                or "0" in str(data)
+                or "Brand" in str(data)
+                or "Alternative" in str(data)):
+                data = None
+            brands_and_models.append(data)
         
         for i in brands_and_models:
             if i != None and i!="*":
