@@ -161,8 +161,8 @@ def parseAndPresentData(selected_index, save_path):
         # data needs to be grabbed differently to support older excel file formatting
         qpoySectionName = df1.cell(row=selected_index[i]+1,column=attempts).value
         qpoySectionValue = df1.cell(row=selected_index[i]+1,column=1+attempts).value
-        qpofyTotalSubSection = df1.cell(row=selected_index[i]+1,column=5).value - qpoySectionValue
-        qpocyTotalSubSection = df1.cell(row=selected_index[i]+1,column=8).value - qpoySectionValue
+        qpofyTotalSubSection = df1.cell(row=selected_index[i]+1,column=5+attempts).value - qpoySectionValue
+        qpocyTotalSubSection = df1.cell(row=selected_index[i]+1,column=9+attempts).value - qpoySectionValue
         qpofyData = {qpoySectionName:qpoySectionValue, "Remaining Fiscal Year Sales - "+qpoySectionName:qpofyTotalSubSection}
         qpocyData = {qpoySectionName:qpoySectionValue, "Remaining Fiscal Year Sales - "+qpoySectionName:qpocyTotalSubSection}
         if qpofyTotalSubSection > 0:
