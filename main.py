@@ -158,26 +158,26 @@ def parseAndPresentData(selected_index, save_path):
         print([item[0] for item in row_values], "\n\n")
 
         #pie charts
-        """
+        # data needs to be grabbed differently to support older excel file formatting
         qpoySectionName = df1.cell(row=selected_index[i]+1,column=attempts).value
         qpoySectionValue = df1.cell(row=selected_index[i]+1,column=1+attempts).value
         qpofyTotalSubSection = df1.cell(row=selected_index[i]+1,column=5).value - qpoySectionValue
         qpocyTotalSubSection = df1.cell(row=selected_index[i]+1,column=8).value - qpoySectionValue
-        if qpofyTotalSubSection != 0:
-            qpofyChart = termcharts.pie({qpoySectionName:qpoySectionValue,
-            "Remaining Fiscal Year Sales - "+qpoySectionName:qpofyTotalSubSection},
+        qpofyData = {qpoySectionName:qpoySectionValue, "Remaining Fiscal Year Sales - "+qpoySectionName:qpofyTotalSubSection}
+        qpocyData = {qpoySectionName:qpoySectionValue, "Remaining Fiscal Year Sales - "+qpoySectionName:qpocyTotalSubSection}
+        if qpofyTotalSubSection > 0:
+            qpofyChart = termcharts.pie(qpofyData,
             title = "Quarter's Percentage of FYTD") # quarter's percentage of fiscal year to date
             print(qpofyChart)
         else:
             print("This quarter's sales make up all of the fiscal year to date.")
-        if qpocyTotalSubSection != 0:
-            qpocyChart = termcharts.pie({qpoySectionName:qpoySectionValue,
-            "Remaining Calendar Year Sales - "+qpoySectionName:qpocyTotalSubSection},
+        if qpocyTotalSubSection > 0:
+            qpocyChart = termcharts.pie(qpocyData,
             title = "Quarter's Percentage of CYTD") # quarter's percentage of calendar year to date
             print(qpocyChart)
         else:
             print("This quarter's sales make up all of the calendar year to date.")
-        """
+        
 
     os.remove(save_path)
         
